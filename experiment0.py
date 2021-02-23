@@ -80,7 +80,9 @@ kf = KFold(n_splits=10)
 
 n_fold = 0
 max_accuracy_train = []
+last_accuracy_train = []
 max_accuracy_test = []
+last_accuracy_test = []
 
 for train_index, test_index in kf.split(X):
     error_epochs = []
@@ -121,7 +123,9 @@ for train_index, test_index in kf.split(X):
         print("Epoch:", e, "Accuracy train:", accuracy_train, "Accuracy test:", accuracy_test)
     
     max_accuracy_train.append(max(accuracy_train_epochs))
+    last_accuracy_train.append(accuracy_train_epochs[-1])
     max_accuracy_test.append(max(accuracy_test_epochs))
+    last_accuracy_test.append(accuracy_test_epochs[-1])
 
     n_fold += 1
     filename = ""
@@ -156,3 +160,12 @@ for train_index, test_index in kf.split(X):
     filename = "test_accuracy" + str(n_fold) + ".png"
     plt.savefig(os.path.join(dir_name, filename))
     plt.clf()
+
+print("Max accuracy train: ")
+print(max_accuracy_train)
+print("Max accuracy test:")
+print(max_accuracy_test)
+print("Last accuracy train per epoch")
+print(last_accuracy_train)
+print("Last accuracy test per epoch")
+print(last_accuracy_test)
