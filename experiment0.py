@@ -59,21 +59,14 @@ X = torch.from_numpy(X)
 Y = np.array(Y)
 Y = torch.from_numpy(Y)
 
-# There are 630 records to classify into 7 classes, every record has 148 neurons
-model = nn.Sequential(nn.Linear(148, 147), nn.Tanh(), nn.Linear(147, 7), nn.Tanh())
-
 criterion = nn.MSELoss()
-
-# Stochastic Grdient Descent optimizer
-optimizer = optim.SGD(model.parameters(), lr=0.001)
 
 epochs = 1000
 
 # Device configuration, it changes to cuda device if it is available
-device = torch.device("cuda:0" if torch.cuda.is_available() else "cpu")
-X = X.to(device)
-Y = Y.to(device)
-model.to(device)
+#device = torch.device("cpu")  #"cuda:0" if torch.cuda.is_available() else "cpu")
+#X = X.to(device)
+#Y = Y.to(device)
 
 # Define the number of folds to cross-validate
 kf = KFold(n_splits=10)
@@ -85,6 +78,14 @@ max_accuracy_test = []
 last_accuracy_test = []
 
 for train_index, test_index in kf.split(X):
+
+    # There are 630 records to classify into 7 classes, every record has 148 neurons
+    model = nn.Sequential(nn.Linear(148, 147), nn.Tanh(), nn.Linear(147, 7), nn.Tanh())
+    #model.to(device)
+
+    # Stochastic Grdient Descent optimizer
+    optimizer = optim.SGD(model.parameters(), lr=0.001)
+
     error_epochs = []
     accuracy_train_epochs = []
     accuracy_test_epochs = []
@@ -92,7 +93,7 @@ for train_index, test_index in kf.split(X):
         running_loss = 0
         num_asserts = 0
 
-        for xi, yo in zip(X, Y):
+        for xi, yo in zip(X[train_index], Y[train_index]):
             optimizer.zero_grad()
             output = model(xi.float())
             loss = criterion(output, yo.float())
@@ -116,9 +117,11 @@ for train_index, test_index in kf.split(X):
             if torch.argmax(output) == torch.argmax(yo):
                 test_num_asserts += 1
         
-        accuracy_train = num_asserts/567
+        accuracy_train = 0
+        accuracy_train = num_asserts/len(train_index)
         accuracy_train_epochs.append(accuracy_train)
-        accuracy_test = test_num_asserts/63
+        accuracy_test = 0
+        accuracy_test = test_num_asserts/len(test_index)
         accuracy_test_epochs.append(accuracy_test)
         print("Epoch:", e, "Accuracy train:", accuracy_train, "Accuracy test:", accuracy_test)
     
@@ -161,11 +164,17 @@ for train_index, test_index in kf.split(X):
     plt.savefig(os.path.join(dir_name, filename))
     plt.clf()
 
+
+
 print("Max accuracy train: ")
 print(max_accuracy_train)
+print("Average:", sum(max_accuracy_train) / len(max_accuracy_train))
 print("Max accuracy test:")
 print(max_accuracy_test)
+print("Average:", sum(max_accuracy_test) / len(max_accuracy_test))
 print("Last accuracy train per epoch")
 print(last_accuracy_train)
+print("Average:", sum(last_accuracy_train) / len(last_accuracy_train))
 print("Last accuracy test per epoch")
 print(last_accuracy_test)
+print("Average:", sum(last_accuracy_test) / len(last_accuracy_test))

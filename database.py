@@ -36,10 +36,10 @@ for o in y:
     if o == 6:
         usabilidad += 1
 
-print("disponibilidad:", disponibilidad)
-print("tolerancia: ", tolerancia)
-print("mantenibilidad:", mantenibilidad)
-print("rendimiento:", rendimiento)
-print("escalabilidad:", escalabilidad)
-print("seguridad:", seguridad)
-print("usabilidad:", usabilidad)
+print("0:", disponibilidad)
+print("1: ", tolerancia)
+print("2:", mantenibilidad)
+print("3:", rendimiento)
+print("4:", escalabilidad)
+print("5:", seguridad)
+print("6:", usabilidad)
