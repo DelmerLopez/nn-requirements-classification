@@ -1,5 +1,6 @@
 import pickle
 
+x_train_data = pickle.load(open("X_train.pickle", "rb"))
 y_train_data = pickle.load(open("y_train.pickle", "rb"))
 y_test_data = pickle.load(open("y_test.pickle", "rb"))
 
@@ -43,3 +44,6 @@ print("3:", rendimiento)
 print("4:", escalabilidad)
 print("5:", seguridad)
 print("6:", usabilidad)
+
+for xi in x_train_data:
+    print(xi)
