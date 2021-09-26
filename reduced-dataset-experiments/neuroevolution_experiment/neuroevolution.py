@@ -1,5 +1,3 @@
-import configparser
-from operator import mul
 from matplotlib import pyplot as plt
 import neat
 from neat import config
@@ -91,7 +89,7 @@ if __name__=='__main__':
                 for xi in x_data[train_index]:
                     outputs.append(np.argmax(net.activate(xi)))
                 
-                return precision_score(y_data[train_index], outputs, average='macro')
+                return precision_score(y_data[train_index], outputs, average='micro', zero_division=0)
 
             config = neat.Config(neat.DefaultGenome, neat.DefaultReproduction,
                                 neat.DefaultSpeciesSet, neat.DefaultStagnation,
@@ -101,8 +99,8 @@ if __name__=='__main__':
             stats = neat.StatisticsReporter()
             p.add_reporter(stats)
 
-            pe = neat.ParallelEvaluator(multiprocessing.cpu_count(), eval_genomes)
-            winner = p.run(pe.evaluate, 2000)
+            pe = neat.ParallelEvaluator(12, eval_genomes)
+            winner = p.run(pe.evaluate, 1000)
             
             winner_net = neat.nn.FeedForwardNetwork.create(winner, config)
 
@@ -126,9 +124,9 @@ if __name__=='__main__':
             
             accuracies_test.append(accuracy_score(y_data[test_index], outputs_test))
             balanced_accuracies.append(balanced_accuracy_score(y_data[test_index], outputs_test))
-            precisions.append(precision_score(y_data[train_index], outputs_train, average='macro'))
-            recalls.append(recall_score(y_data[train_index], outputs_train, average='macro'))
-            f1_scores.append(f1_score(y_data[train_index], outputs_train, average='macro'))
+            precisions.append(precision_score(y_data[test_index], outputs_test, average='macro', zero_division=0))
+            recalls.append(recall_score(y_data[test_index], outputs_test, average='macro', zero_division=0))
+            f1_scores.append(f1_score(y_data[test_index], outputs_test, average='macro', zero_division=0))
 
             n_fold += 1
 
